@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Admin Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Admin Dashboard</h1>
+
+      <nav class="menu">
+        <a href="/create_voter">Create Voter</a>
+        <a href="/create_election">Create Election</a>
+        <a href="/results">View Results</a>
+        <a href="/logout">Logout</a>
+      </nav>
+
+      <p>Welcome, Admin. Use the options above to manage the voting system.</p>
+    </div>
+  </body>
+</html>

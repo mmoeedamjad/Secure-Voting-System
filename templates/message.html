@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>System Message</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container center">
+      <h1>{{ title }}</h1>
+      <p>{{ message }}</p>
+
+      <a href="{{ redirect_url }}">Continue</a>
+    </div>
+  </body>
+</html>

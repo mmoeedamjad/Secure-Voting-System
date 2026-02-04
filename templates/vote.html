@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Cast Vote</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Cast Your Vote</h1>
+
+      <p class="question">{{ question }}</p>
+
+      <form method="post">
+        {% for option in options %}
+        <div class="radio-group">
+          <input
+            type="radio"
+            name="vote_option"
+            value="{{ option }}"
+            required
+          />
+          <label>{{ option }}</label>
+        </div>
+        {% endfor %}
+
+        <button type="submit">Submit Vote</button>
+      </form>
+
+      <p class="warning">⚠ Once submitted, your vote cannot be changed.</p>
+    </div>
+  </body>
+</html>

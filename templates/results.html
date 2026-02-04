@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Election Results</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Election Results</h1>
+
+      <p><strong>Encrypted Vote Data:</strong></p>
+      <pre class="encrypted-box">{{ encrypted_data }}</pre>
+
+      <form method="post">
+        <label>Admin Decryption Key</label>
+        <input type="password" name="decrypt_key" required />
+
+        <button type="submit">Decrypt Results</button>
+      </form>
+
+      {% if results %}
+      <h2>Decrypted Results</h2>
+      <ul>
+        {% for option, count in results.items() %}
+        <li>{{ option }} : {{ count }} votes</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+
+      <a href="/admin">Back to Dashboard</a>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Create Voter</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Create Voter</h1>
+
+      {% if message %}
+      <div class="success">{{ message }}</div>
+      {% endif %}
+
+      <form method="post">
+        <label>Voter ID</label>
+        <input type="text" name="voter_id" required />
+
+        <label>Password</label>
+        <input type="password" name="password" required />
+
+        <button type="submit">Create Voter</button>
+      </form>
+
+      <a href="/admin">Back to Dashboard</a>
+    </div>
+  </body>
+</html>
