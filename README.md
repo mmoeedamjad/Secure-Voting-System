@@ -30,5 +30,6 @@ A Flask-based secure voting system project.
 Open your browser and go to: http://127.0.0.1:5000
 
 4. **Login**
+    ```bash
     user: admin
     password: admin123
