@@ -21,7 +21,7 @@ A Flask-based secure voting system project.
     ```bash
     python -m venv venv
     venv\Scripts\activate
-    pip install -r flask
+    pip install flask
 
 3. **Run the System**
     ```bash
