@@ -18,14 +18,16 @@ A Flask-based secure voting system project.
    git pull origin main
 
 2. **Create venv**
+    ```bash
     python -m venv venv
     venv\Scripts\activate
     pip install -r flask
 
 3. **Run the System**
+    ```bash
     python init_system.py
     python app.py
-    Open your browser and go to: http://127.0.0.1:5000
+Open your browser and go to: http://127.0.0.1:5000
 
 4. **Login**
     user: admin
