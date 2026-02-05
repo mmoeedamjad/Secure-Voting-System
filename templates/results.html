@@ -1,37 +1,60 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <title>Election Results</title>
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}"
-    />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audit Results | SecureVote</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <style>
+      /* Page specific enhancements for the ledger */
+      .ledger-entry {
+        font-family: 'Fira Code', monospace;
+        font-size: 0.75rem;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--glass-border);
+        color: var(--text-muted);
+      }
+      .tally-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+      }
+    </style>
   </head>
   <body>
     <div class="container">
-      <h1>Election Results</h1>
+      <h1>Election Audit</h1>
+      <h2>Encrypted Ledger Data</h2>
 
-      <p><strong>Encrypted Vote Data:</strong></p>
-      <pre class="encrypted-box">{{ encrypted_data }}</pre>
+      <div class="encrypted-box" style="max-height: 180px; overflow-y: auto;">
+        {% for vote in encrypted_data %}
+        <div class="ledger-entry">
+          <span style="color: var(--success)">ENTRY {{ loop.index }}:</span> 
+          {{ vote.encrypted_vote[:40] }}...
+        </div>
+        {% endfor %}
+      </div>
 
       <form method="post">
-        <label>Admin Decryption Key</label>
-        <input type="password" name="decrypt_key" required />
-
-        <button type="submit">Decrypt Results</button>
+        <button type="submit">Execute Decryption & Tally</button>
       </form>
 
       {% if results %}
-      <h2>Decrypted Results</h2>
-      <ul>
+      <div class="success" style="margin-top: 2rem;">
+        <label style="color: var(--success); margin-bottom: 1rem;">Verified Tally Results</label>
         {% for option, count in results.items() %}
-        <li>{{ option }} : {{ count }} votes</li>
+        <div class="tally-row">
+          <span>{{ option }}</span>
+          <span style="font-weight: 700;">{{ count }} Votes</span>
+        </div>
         {% endfor %}
-      </ul>
+      </div>
       {% endif %}
 
-      <a href="/admin">Back to Dashboard</a>
+      <div class="menu">
+        <a href="/admin">Return to Admin Panel</a>
+      </div>
     </div>
   </body>
 </html>

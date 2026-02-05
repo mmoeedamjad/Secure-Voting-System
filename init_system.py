@@ -4,29 +4,22 @@ from crypto import generate_asymmetric_keys, simple_hash
 def setup_system():
     init_db()
     db = get_db()
-    cur = db.cursor()
-
-    # Create Admin
+    
+    # Generate Admin Keys
     pub, priv = generate_asymmetric_keys()
-    password = "admin123"
-    password_hash = simple_hash(password.encode())
+    admin_pw_hash = simple_hash("admin123")
 
-    cur.execute("""
-    INSERT OR IGNORE INTO users
-    (username, password_hash, has_voted, pub_e, pub_n, priv_d, priv_n, role)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    """, (
-        "admin",
-        password_hash,
-        0,
-        pub[0], pub[1],
-        priv[0], priv[1],
-        "admin"
-    ))
-
-    db.commit()
-    db.close()
-    print("System initialized. Admin credentials: admin / admin123")
+    try:
+        db.execute("""
+            INSERT INTO users (username, password_hash, pub_e, pub_n, priv_d, priv_n, role)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, ("admin", admin_pw_hash, pub[0], pub[1], priv[0], priv[1], "admin"))
+        db.commit()
+        print("System Initialized. Admin: admin / admin123")
+    except:
+        print("System already initialized.")
+    finally:
+        db.close()
 
 if __name__ == "__main__":
     setup_system()

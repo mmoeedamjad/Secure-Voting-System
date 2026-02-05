@@ -1,38 +1,49 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <title>Create Election</title>
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}"
-    />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Election | SecureVote</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
   </head>
   <body>
     <div class="container">
-      <h1>Create Election</h1>
+      <h1>Election Setup</h1>
+      <h2>Define Ballot Parameters</h2>
 
-      {% if message %}
-      <div class="success">{{ message }}</div>
-      {% endif %}
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <div class="success">{{ messages[0] }}</div>
+        {% endif %}
+      {% endwith %}
 
       <form method="post">
-        <label>Election Question</label>
-        <input type="text" name="question" required />
+        <div class="form-group">
+          <label>Ballot Question</label>
+          <input type="text" name="question" placeholder="e.g. Project Leader Selection" required />
+        </div>
 
-        <label>Option 1</label>
-        <input type="text" name="option1" required />
+        <div class="form-group">
+          <label>Option Alpha</label>
+          <input type="text" name="option1" required />
+        </div>
 
-        <label>Option 2</label>
-        <input type="text" name="option2" required />
+        <div class="form-group">
+          <label>Option Beta</label>
+          <input type="text" name="option2" required />
+        </div>
 
-        <label>Option 3 (optional)</label>
-        <input type="text" name="option3" />
+        <div class="form-group">
+          <label>Option Gamma (Optional)</label>
+          <input type="text" name="option3" />
+        </div>
 
-        <button type="submit">Create Election</button>
+        <button type="submit">Initialize Election</button>
       </form>
 
-      <a href="/admin">Back to Dashboard</a>
+      <div class="menu">
+        <a href="/admin">Return to Panel</a>
+      </div>
     </div>
   </body>
 </html>

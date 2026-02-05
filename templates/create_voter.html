@@ -1,32 +1,39 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <title>Create Voter</title>
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}"
-    />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Voter | SecureVote</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
   </head>
   <body>
     <div class="container">
-      <h1>Create Voter</h1>
+      <h1>Voter Enrollment</h1>
+      <h2>Secure Credential Issuance</h2>
 
-      {% if message %}
-      <div class="success">{{ message }}</div>
-      {% endif %}
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <div class="success">{{ messages[0] }}</div>
+        {% endif %}
+      {% endwith %}
 
-      <form method="post">
-        <label>Voter ID</label>
-        <input type="text" name="voter_id" required />
+      <form method="post" action="{{ url_for('create_voter') }}">
+        <div class="form-group">
+          <label>Voter Identity</label>
+          <input type="text" name="voter_id" placeholder="e.g. voter_001" required />
+        </div>
 
-        <label>Password</label>
-        <input type="password" name="password" required />
+        <div class="form-group">
+          <label>Initial Password</label>
+          <input type="password" name="password" required />
+        </div>
 
-        <button type="submit">Create Voter</button>
+        <button type="submit">Enroll Voter</button>
       </form>
 
-      <a href="/admin">Back to Dashboard</a>
+      <div class="menu">
+        <a href="/admin">Return to Panel</a>
+      </div>
     </div>
   </body>
 </html>

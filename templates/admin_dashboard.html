@@ -1,25 +1,26 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <title>Admin Dashboard</title>
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}"
-    />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Management | SecureVote</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   </head>
   <body>
     <div class="container">
-      <h1>Admin Dashboard</h1>
+      <h1>Control Panel</h1>
+      <h2>Administrative Access</h2>
+      
+      {% if message %}
+      <div class="success">{{ message }}</div>
+      {% endif %}
 
-      <nav class="menu">
-        <a href="/create_voter">Create Voter</a>
-        <a href="/create_election">Create Election</a>
-        <a href="/results">View Results</a>
-        <a href="/logout">Logout</a>
-      </nav>
-
-      <p>Welcome, Admin. Use the options above to manage the voting system.</p>
+      <div class="menu">
+        <a href="/create_voter">Register New Voter</a>
+        <a href="/create_election">Configure Election</a>
+        <a href="/results">Audit Election Results</a>
+        <a href="/logout" style="margin-top: 1rem; border-color: rgba(239, 68, 68, 0.3); color: var(--error);">Terminate Session</a>
+      </div>
     </div>
   </body>
 </html>
