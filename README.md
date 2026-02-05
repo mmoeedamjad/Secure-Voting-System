@@ -10,7 +10,7 @@ A Flask-based secure voting system project.
 ## Setup Instructions
 
 1. **Clone the repository**
-   For example in D: drive, open cmd in D: drive and run these following commands
+   - For example in D: drive, open cmd in D: drive and run these following commands
    ```bash
    git clone https://github.com/mmoeedamjad/Secure-Voting-System.git
    cd Secure-Voting-System
