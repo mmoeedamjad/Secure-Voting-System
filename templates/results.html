@@ -1,60 +1,242 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audit Results | SecureVote</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
-    <style>
-      /* Page specific enhancements for the ledger */
-      .ledger-entry {
-        font-family: 'Fira Code', monospace;
-        font-size: 0.75rem;
-        padding: 0.5rem 0;
-        border-bottom: 1px solid var(--glass-border);
-        color: var(--text-muted);
-      }
-      .tally-row {
-        display: flex;
-        justify-content: space-between;
-        padding: 0.75rem 0;
-        border-bottom: 1px solid rgba(255,255,255,0.05);
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <h1>Election Audit</h1>
-      <h2>Encrypted Ledger Data</h2>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Audit Results | SecureVote</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 
-      <div class="encrypted-box" style="max-height: 180px; overflow-y: auto;">
-        {% for vote in encrypted_data %}
-        <div class="ledger-entry">
-          <span style="color: var(--success)">ENTRY {{ loop.index }}:</span> 
-          {{ vote.encrypted_vote[:40] }}...
-        </div>
-        {% endfor %}
-      </div>
+<style>
+.ledger-entry {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.75rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--glass-border);
+  color: var(--text-muted);
+}
 
-      <form method="post">
-        <button type="submit">Execute Decryption & Tally</button>
-      </form>
+.tally-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
 
-      {% if results %}
-      <div class="success" style="margin-top: 2rem;">
-        <label style="color: var(--success); margin-bottom: 1rem;">Verified Tally Results</label>
-        {% for option, count in results.items() %}
-        <div class="tally-row">
-          <span>{{ option }}</span>
-          <span style="font-weight: 700;">{{ count }} Votes</span>
-        </div>
-        {% endfor %}
-      </div>
-      {% endif %}
+.winner {
+  background: rgba(16,185,129,0.1);
+  padding: 1rem;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  border: 1px solid rgba(16,185,129,0.3);
+  color: var(--success);
+  font-weight: bold;
+  text-align: center;
+}
 
-      <div class="menu">
-        <a href="/admin">Return to Admin Panel</a>
-      </div>
+.election-form {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.election-form select,
+.election-form button {
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--glass-border);
+  background: rgba(255,255,255,0.05);
+  color: white;
+}
+
+.election-form button {
+  background: var(--primary-color);
+  cursor: pointer;
+  margin-left: 1rem;
+}
+
+.election-form button:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+}
+
+/* Flash Messages */
+.flash-messages {
+  margin-bottom: 1.5rem;
+}
+
+.flash-message {
+  padding: 1rem;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  border: 1px solid;
+  text-align: center;
+}
+
+.flash-message.success {
+  background: rgba(16,185,129,0.1);
+  border-color: rgba(16,185,129,0.3);
+  color: var(--success);
+}
+
+.flash-message.error {
+  background: rgba(239,68,68,0.1);
+  border-color: rgba(239,68,68,0.3);
+  color: var(--error);
+}
+
+/* Participation Stats */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.stat-box {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.stat-box .number {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--primary-color);
+}
+
+.stat-box .label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-top: 0.5rem;
+}
+
+.stat-box.success .number {
+  color: var(--success);
+}
+
+.stat-box.warning .number {
+  color: var(--warning);
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<h1>Election Audit</h1>
+<h2>Select Election to View Results</h2>
+
+<!-- Flash Messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-messages">
+      {% for category, message in messages %}
+        <div class="flash-message {{ category }}">{{ message }}</div>
+      {% endfor %}
     </div>
-  </body>
+  {% endif %}
+{% endwith %}
+
+<!-- Election Selection -->
+<form method="POST" class="election-form">
+  <select name="election_id" required>
+    <option value="">-- Choose Election --</option>
+    {% for election in elections %}
+      <option value="{{ election['id'] }}"
+        {% if selected_election and selected_election|string == election['id']|string %} selected {% endif %}>
+        {{ election['question'] }}
+      </option>
+    {% endfor %}
+  </select>
+
+  <button type="submit">Decrypt & Show Results</button>
+</form>
+
+{% if not selected_election %}
+<p style="text-align:center; color:var(--text-muted);">
+  Please select an election to audit results.
+</p>
+{% endif %}
+
+{% if selected_election %}
+
+<!-- Participation Statistics -->
+{% if stats %}
+<div class="stats-grid">
+  <div class="stat-box">
+    <div class="number">{{ stats.total_registered }}</div>
+    <div class="label">Registered Voters</div>
+  </div>
+  <div class="stat-box success">
+    <div class="number">{{ stats.total_voted }}</div>
+    <div class="label">Votes Cast</div>
+  </div>
+  <div class="stat-box warning">
+    <div class="number">{{ stats.pending }}</div>
+    <div class="label">Pending Votes</div>
+  </div>
+  <div class="stat-box">
+    <div class="number">{{ "%.1f"|format(stats.turnout_percentage) }}%</div>
+    <div class="label">Turnout Rate</div>
+  </div>
+</div>
+{% endif %}
+
+<h2>Encrypted Ledger Data</h2>
+
+<div class="encrypted-box" style="max-height: 200px; overflow-y: auto;">
+  {% if encrypted_data %}
+    {% for vote in encrypted_data %}
+    <div class="ledger-entry">
+      <span style="color: var(--success)">ENTRY {{ loop.index }}:</span>
+      {{ vote.encrypted_vote[:60] }}...
+    </div>
+    {% endfor %}
+  {% else %}
+    <p style="color:var(--text-muted); text-align:center;">
+      No votes recorded for this election yet.
+    </p>
+  {% endif %}
+</div>
+
+{% if results %}
+
+<!-- Determine Winner -->
+{% set winner = results|dictsort(by='value', reverse=true)|first %}
+
+<div class="success" style="margin-top: 2rem;">
+
+  <div class="winner">
+    🏆 Winner: {{ winner[0] }} ({{ winner[1] }} Vote{% if winner[1] != 1 %}s{% endif %})
+  </div>
+
+  <label style="color: var(--success); margin-bottom: 1rem;">
+    Verified Tally Results
+  </label>
+
+  {% for option, count in results.items()|sort(attribute='1', reverse=true) %}
+  <div class="tally-row">
+    <span>{{ option }}</span>
+    <span style="font-weight:700;">{{ count }} Vote{% if count != 1 %}s{% endif %}</span>
+  </div>
+  {% endfor %}
+
+</div>
+
+{% elif encrypted_data %}
+<p style="text-align:center; color:var(--text-muted); margin-top: 2rem;">
+  Votes are encrypted. Click "Decrypt & Show Results" to view the tally.
+</p>
+{% endif %}
+
+{% endif %}
+
+<div class="menu" style="margin-top:2rem;">
+  <a href="/admin">Return to Admin Panel</a>
+</div>
+
+</div>
+</body>
 </html>

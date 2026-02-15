@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Voter Registry | SecureVote</title>
+
+<style>
+:root {
+  --primary-color: #6366f1;
+  --primary-hover: #4f46e5;
+  --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+  --card-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --info: #3b82f6;
+  --overlay: rgba(0, 0, 0, 0.3);
+}
+
+body {
+  background: var(--bg-gradient);
+  font-family: "Inter", sans-serif;
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.container {
+  background: var(--card-bg);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  padding: 3rem;
+  width: 95%;
+  max-width: 1200px;
+  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+}
+
+h1 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+/* Flash Messages */
+.flash-messages {
+  margin-bottom: 1.5rem;
+}
+
+.flash-message {
+  padding: 1rem;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  border: 1px solid;
+  text-align: center;
+}
+
+.flash-message.success {
+  background: rgba(16,185,129,0.1);
+  border-color: rgba(16,185,129,0.3);
+  color: var(--success);
+}
+
+.flash-message.error {
+  background: rgba(239,68,68,0.1);
+  border-color: rgba(239,68,68,0.3);
+  color: var(--error);
+}
+
+/* Dropdown */
+.election-form {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.election-form select,
+.election-form button {
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--glass-border);
+  background: rgba(255,255,255,0.05);
+  color: white;
+  font-size: 0.95rem;
+}
+
+.election-form button {
+  background: var(--primary-color);
+  cursor: pointer;
+  margin-left: 1rem;
+  transition: 0.3s;
+}
+
+.election-form button:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+}
+
+/* Stats */
+.stats-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: var(--overlay);
+  border-radius: 16px;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.stat-number {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--primary-color);
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-top: 0.5rem;
+}
+
+/* Table */
+.table-container {
+  background: var(--overlay);
+  border-radius: 16px;
+  overflow: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--glass-border);
+  text-align: left;
+}
+
+th {
+  background: rgba(99,102,241,0.15);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.badge-admin { 
+  color: #f87171; 
+  font-weight: bold;
+  background: rgba(248, 113, 113, 0.1);
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
+}
+
+.badge-voter { 
+  color: #60a5fa; 
+  font-weight: bold;
+  background: rgba(96, 165, 250, 0.1);
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
+}
+
+.status-voted { 
+  color: var(--success); 
+  font-weight: bold;
+  background: rgba(16, 185, 129, 0.1);
+  padding: 0.35rem 1rem;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.status-pending { 
+  color: var(--warning); 
+  font-weight: bold;
+  background: rgba(245, 158, 11, 0.1);
+  padding: 0.35rem 1rem;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.menu {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.menu a {
+  display: inline-block;
+  padding: 0.8rem 1.5rem;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.05);
+  color: white;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.menu a:hover {
+  background: rgba(255,255,255,0.1);
+  transform: translateY(-2px);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--text-muted);
+}
+
+/* Pending voters have slightly faded appearance */
+tr.voted {
+  opacity: 1;
+}
+
+tr.pending {
+  opacity: 0.8;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<h1>Voter Registry</h1>
+<h2>Election Participation Tracking</h2>
+
+<!-- Flash Messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-messages">
+      {% for category, message in messages %}
+        <div class="flash-message {{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<!-- Election Selection -->
+<form method="POST" class="election-form">
+  <select name="election_id" required>
+    <option value="">-- Choose Election --</option>
+    {% for election in elections %}
+      <option value="{{ election['id'] }}"
+        {% if selected_election and selected_election|string == election['id']|string %} selected {% endif %}>
+        {{ election['question'] }}
+      </option>
+    {% endfor %}
+  </select>
+  <button type="submit">View Voters</button>
+</form>
+
+{% if not selected_election %}
+  <p style="text-align:center; color:var(--text-muted);">
+    Please select an election to view registered voters and their voting status.
+  </p>
+{% endif %}
+
+{% if selected_election and users %}
+
+<!-- Statistics -->
+{% set total_voters = users|length %}
+{% set voted_count = users|selectattr('voted_in_election', 'equalto', 1)|list|length %}
+{% set pending_count = total_voters - voted_count %}
+
+<div class="stats-container">
+  <div class="stat-card">
+    <div class="stat-number">{{ total_voters }}</div>
+    <div class="stat-label">Total Registered</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number" style="color: var(--success);">{{ voted_count }}</div>
+    <div class="stat-label">Completed Voting</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number" style="color: var(--warning);">{{ pending_count }}</div>
+    <div class="stat-label">Pending Votes</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number">
+      {% if total_voters > 0 %}
+        {{ "%.1f"|format((voted_count / total_voters * 100)) }}%
+      {% else %}
+        0%
+      {% endif %}
+    </div>
+    <div class="stat-label">Turnout Rate</div>
+  </div>
+</div>
+
+<!-- Table -->
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Username</th>
+<th>Role</th>
+<th>Voting Status</th>
+</tr>
+</thead>
+<tbody>
+{% for user in users %}
+<tr class="{% if user['voted_in_election'] == 1 %}voted{% else %}pending{% endif %}">
+<td>{{ user['id'] }}</td>
+<td>{{ user['username'] }}</td>
+<td>
+  {% if user['role'] == 'admin' %}
+    <span class="badge-admin">Admin</span>
+  {% else %}
+    <span class="badge-voter">Voter</span>
+  {% endif %}
+</td>
+<td>
+  {% if user['voted_in_election'] == 1 %}
+    <span class="status-voted">✓ Vote Cast</span>
+  {% else %}
+    <span class="status-pending">⏳ Awaiting Vote</span>
+  {% endif %}
+</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+
+<div style="margin-top: 1.5rem; padding: 1rem; background: rgba(99, 102, 241, 0.05); border-radius: 12px; font-size: 0.9rem; color: var(--text-muted);">
+  <strong>Note:</strong> Only voters registered for this election are shown. 
+  Voters who have completed voting are marked with ✓.
+</div>
+
+{% elif selected_election and not users %}
+  <div class="empty-state">
+    <h3>No Voters Registered</h3>
+    <p>No voters have been registered for this election yet.</p>
+    <p style="margin-top: 1rem;">
+      <a href="{{ url_for('create_voter') }}" style="color: var(--primary-color);">
+        Register voters for this election →
+      </a>
+    </p>
+  </div>
+{% endif %}
+
+<div class="menu">
+  <a href="/admin">Return to Admin Panel</a>
+</div>
+
+</div>
+</body>
+</html>

@@ -1,26 +1,140 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Register Voter | SecureVote</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <style>
+      /* Flash Messages */
+      .flash-messages {
+        margin-bottom: 1.5rem;
+      }
+
+      .flash-message {
+        padding: 1rem;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        border: 1px solid;
+        text-align: center;
+      }
+
+      .flash-message.success {
+        background: rgba(16, 185, 129, 0.1);
+        border-color: rgba(16, 185, 129, 0.3);
+        color: #10b981;
+      }
+
+      .flash-message.error {
+        background: rgba(239, 68, 68, 0.1);
+        border-color: rgba(239, 68, 68, 0.3);
+        color: #ef4444;
+      }
+
+      /* Election Selection */
+      .election-section {
+        margin: 1.5rem 0;
+      }
+
+      .election-section h3 {
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+        color: var(--primary-color);
+      }
+
+      .election-list {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        padding: 1rem;
+        max-height: 300px;
+        overflow-y: auto;
+      }
+
+      .election-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem;
+        margin-bottom: 0.5rem;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .election-item:hover {
+        background: rgba(255, 255, 255, 0.08);
+        transform: translateX(5px);
+      }
+
+      .election-item input[type="checkbox"] {
+        margin-right: 1rem;
+        width: 1.2rem;
+        height: 1.2rem;
+        cursor: pointer;
+        accent-color: var(--primary-color);
+      }
+
+      .election-item label {
+        cursor: pointer;
+        flex: 1;
+      }
+
+      .no-elections {
+        text-align: center;
+        padding: 2rem;
+        color: var(--text-muted);
+      }
+
+      .select-all {
+        margin-bottom: 1rem;
+        padding: 0.75rem;
+        background: rgba(99, 102, 241, 0.1);
+        border: 1px solid rgba(99, 102, 241, 0.3);
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        font-weight: 600;
+        color: var(--primary-color);
+      }
+
+      .select-all input[type="checkbox"] {
+        margin-right: 0.75rem;
+        width: 1.2rem;
+        height: 1.2rem;
+        cursor: pointer;
+        accent-color: var(--primary-color);
+      }
+    </style>
   </head>
   <body>
     <div class="container">
       <h1>Voter Enrollment</h1>
       <h2>Secure Credential Issuance</h2>
 
-      {% with messages = get_flashed_messages() %}
-        {% if messages %}
-          <div class="success">{{ messages[0] }}</div>
-        {% endif %}
-      {% endwith %}
+      <!-- Flash Messages with Categories -->
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %}
+      <div class="flash-messages">
+        {% for category, message in messages %}
+        <div class="flash-message {{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+      {% endif %} {% endwith %}
 
       <form method="post" action="{{ url_for('create_voter') }}">
         <div class="form-group">
           <label>Voter Identity</label>
-          <input type="text" name="voter_id" placeholder="e.g. voter_001" required />
+          <input
+            type="text"
+            name="voter_id"
+            placeholder="e.g. voter_001"
+            required
+          />
         </div>
 
         <div class="form-group">
@@ -28,12 +142,115 @@
           <input type="password" name="password" required />
         </div>
 
-        <button type="submit">Enroll Voter</button>
+        <!-- Election Selection -->
+        <div class="election-section">
+          <h3>📋 Register for Elections</h3>
+
+          {% if elections %}
+
+          <!-- Select All Option -->
+          <div class="select-all" onclick="toggleSelectAll(this)">
+            <input
+              type="checkbox"
+              id="select-all-checkbox"
+              onclick="
+                event.stopPropagation();
+                toggleSelectAll(this.parentElement);
+              "
+            />
+            <label for="select-all-checkbox" onclick="event.stopPropagation()"
+              >Select All Elections</label
+            >
+          </div>
+
+          <div class="election-list">
+            {% for election in elections %}
+            <div class="election-item" onclick="toggleCheckbox(this)">
+              <input
+                type="checkbox"
+                name="elections"
+                value="{{ election['id'] }}"
+                id="election-{{ election['id'] }}"
+                class="election-checkbox"
+                onclick="event.stopPropagation()"
+              />
+              <label
+                for="election-{{ election['id'] }}"
+                onclick="event.stopPropagation()"
+              >
+                {{ election['question'] }}
+              </label>
+            </div>
+            {% endfor %}
+          </div>
+
+          {% else %}
+          <div class="no-elections">
+            <p>⚠️ No elections available</p>
+            <p style="font-size: 0.9rem; margin-top: 0.5rem">
+              Please create an election first before registering voters.
+            </p>
+            <a
+              href="{{ url_for('create_election') }}"
+              style="
+                color: var(--primary-color);
+                margin-top: 1rem;
+                display: inline-block;
+              "
+            >
+              → Create Election
+            </a>
+          </div>
+          {% endif %}
+        </div>
+
+        <button type="submit" {% if not elections %}disabled{% endif %}>
+          Enroll Voter
+        </button>
       </form>
 
       <div class="menu">
         <a href="/admin">Return to Panel</a>
       </div>
     </div>
+
+    <script>
+      // Toggle individual checkbox when clicking the card
+      function toggleCheckbox(card) {
+        const checkbox = card.querySelector('input[type="checkbox"]');
+        checkbox.checked = !checkbox.checked;
+        updateSelectAllState();
+      }
+
+      // Toggle all checkboxes
+      function toggleSelectAll(selectAllDiv) {
+        const selectAllCheckbox = document.getElementById(
+          "select-all-checkbox",
+        );
+        const allCheckboxes = document.querySelectorAll(".election-checkbox");
+
+        selectAllCheckbox.checked = !selectAllCheckbox.checked;
+
+        allCheckboxes.forEach((checkbox) => {
+          checkbox.checked = selectAllCheckbox.checked;
+        });
+      }
+
+      // Update "Select All" state based on individual checkboxes
+      function updateSelectAllState() {
+        const allCheckboxes = document.querySelectorAll(".election-checkbox");
+        const selectAllCheckbox = document.getElementById(
+          "select-all-checkbox",
+        );
+
+        const allChecked = Array.from(allCheckboxes).every((cb) => cb.checked);
+        selectAllCheckbox.checked = allChecked;
+      }
+
+      // Add change listeners to all checkboxes
+      document.querySelectorAll(".election-checkbox").forEach((checkbox) => {
+        checkbox.addEventListener("change", updateSelectAllState);
+      });
+    </script>
   </body>
 </html>

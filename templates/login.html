@@ -1,31 +1,43 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Secure Access | Voting System</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
   </head>
   <body>
     <div class="container">
       <h1>SecureVote</h1>
       <h2>Identity Verification</h2>
 
-      {% with messages = get_flashed_messages() %}
-        {% if messages %}
-          <div class="error">{{ messages[0] }}</div>
-        {% endif %}
-      {% endwith %}
+      {% with messages = get_flashed_messages() %} {% if messages %}
+      <div class="error">{{ messages[0] }}</div>
+      {% endif %} {% endwith %}
 
       <form method="post" action="{{ url_for('login') }}">
         <div class="form-group">
           <label>User Identifier</label>
-          <input type="text" name="user_id" placeholder="Enter ID" required autocomplete="off">
+          <input
+            type="text"
+            name="user_id"
+            placeholder="Enter ID"
+            required
+            autocomplete="off"
+          />
         </div>
 
         <div class="form-group">
           <label>Security Password</label>
-          <input type="password" name="password" placeholder="••••••••" required>
+          <input
+            type="password"
+            name="password"
+            placeholder="••••••••"
+            required
+          />
         </div>
 
         <button type="submit">Unlock Dashboard</button>

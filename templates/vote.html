@@ -1,10 +1,13 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cast Ballot | SecureVote</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
     <style>
       .ballot-options {
         margin: 1.5rem 0;
@@ -18,7 +21,9 @@
         border: 1px solid var(--glass-border);
         display: flex;
         align-items: center;
-        transition: transform 0.2s ease, background 0.2s ease;
+        transition:
+          transform 0.2s ease,
+          background 0.2s ease;
       }
       .radio-card:hover {
         background: rgba(255, 255, 255, 0.08);
@@ -42,7 +47,9 @@
   <body>
     <div class="container">
       <h1>Secure Ballot</h1>
-      <h2 style="color: var(--primary-color); margin-bottom: 2rem;">{{ question }}</h2>
+      <h2 style="color: var(--primary-color); margin-bottom: 2rem">
+        {{ question }}
+      </h2>
 
       <form method="post">
         <div class="ballot-options">
@@ -62,7 +69,7 @@
 
         <button type="submit">Encrypt & Cast Vote</button>
       </form>
-      
+
       <p class="footer-note">
         Your vote is protected with end-to-end encryption.
       </p>

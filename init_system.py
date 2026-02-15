@@ -1,4 +1,4 @@
-from database import init_db, get_db
+from database import init_db, get_db, reset_database
 from crypto import generate_asymmetric_keys, simple_hash
 
 def setup_system():
@@ -22,4 +22,5 @@ def setup_system():
         db.close()
 
 if __name__ == "__main__":
+    reset_database()
     setup_system()
