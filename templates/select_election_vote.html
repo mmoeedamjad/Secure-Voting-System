@@ -1,288 +1,289 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Select Election | SecureVote</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Select Election | SecureVote</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <style>
+      :root {
+        --primary: #6366f1;
+        --primary-hover: #4f46e5;
+        --bg: linear-gradient(135deg, #0f172a, #1e1b4b);
+        --glass: rgba(255, 255, 255, 0.05);
+        --border: rgba(255, 255, 255, 0.1);
+        --text: #f8fafc;
+        --success: #10b981;
+        --error: #ef4444;
+      }
 
-<style>
-:root {
-  --primary: #6366f1;
-  --primary-hover: #4f46e5;
-  --bg: linear-gradient(135deg,#0f172a,#1e1b4b);
-  --glass: rgba(255,255,255,0.05);
-  --border: rgba(255,255,255,0.1);
-  --text: #f8fafc;
-  --success: #10b981;
-  --error: #ef4444;
-}
+      body {
+        background: var(--bg);
+        font-family: "Inter", sans-serif;
+        color: var(--text);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+      }
 
-body {
-  background: var(--bg);
-  font-family: "Inter", sans-serif;
-  color: var(--text);
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-}
+      .container {
+        background: var(--glass);
+        backdrop-filter: blur(16px);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 3rem;
+        width: 90%;
+        max-width: 600px;
+      }
 
-.container {
-  background: var(--glass);
-  backdrop-filter: blur(16px);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 3rem;
-  width: 90%;
-  max-width: 600px;
-}
+      h1 {
+        text-align: center;
+        margin-bottom: 0.5rem;
+        font-size: 2rem;
+      }
 
-h1 {
-  text-align: center;
-  margin-bottom: 0.5rem;
-  font-size: 2rem;
-}
+      h2 {
+        text-align: center;
+        color: #94a3b8;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 2rem;
+      }
 
-h2 {
-  text-align: center;
-  color: #94a3b8;
-  font-size: 0.9rem;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-bottom: 2rem;
-}
+      /* Flash Messages */
+      .flash-messages {
+        margin-bottom: 1.5rem;
+      }
 
-/* Flash Messages */
-.flash-messages {
-  margin-bottom: 1.5rem;
-}
+      .flash-message {
+        padding: 1rem;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        border: 1px solid;
+        text-align: center;
+      }
 
-.flash-message {
-  padding: 1rem;
-  border-radius: 12px;
-  margin-bottom: 1rem;
-  border: 1px solid;
-  text-align: center;
-}
+      .flash-message.success {
+        background: rgba(16, 185, 129, 0.1);
+        border-color: rgba(16, 185, 129, 0.3);
+        color: var(--success);
+      }
 
-.flash-message.success {
-  background: rgba(16,185,129,0.1);
-  border-color: rgba(16,185,129,0.3);
-  color: var(--success);
-}
+      .flash-message.error {
+        background: rgba(239, 68, 68, 0.1);
+        border-color: rgba(239, 68, 68, 0.3);
+        color: var(--error);
+      }
 
-.flash-message.error {
-  background: rgba(239,68,68,0.1);
-  border-color: rgba(239,68,68,0.3);
-  color: var(--error);
-}
+      .election-info {
+        background: rgba(99, 102, 241, 0.1);
+        border: 1px solid rgba(99, 102, 241, 0.3);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        text-align: center;
+      }
 
-.election-info {
-  background: rgba(99,102,241,0.1);
-  border: 1px solid rgba(99,102,241,0.3);
-  border-radius: 12px;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
-  text-align: center;
-}
+      .election-info h3 {
+        color: var(--primary);
+        margin-bottom: 0.5rem;
+      }
 
-.election-info h3 {
-  color: var(--primary);
-  margin-bottom: 0.5rem;
-}
+      select {
+        width: 100%;
+        padding: 1rem;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.05);
+        color: white;
+        font-size: 1rem;
+        margin-bottom: 2rem;
+        cursor: pointer;
+      }
 
-select {
-  width: 100%;
-  padding: 1rem;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  background: rgba(255,255,255,0.05);
-  color: white;
-  font-size: 1rem;
-  margin-bottom: 2rem;
-  cursor: pointer;
-}
+      select:focus {
+        outline: none;
+        border-color: var(--primary);
+      }
 
-select:focus {
-  outline: none;
-  border-color: var(--primary);
-}
+      .options-box {
+        margin-top: 2rem;
+      }
 
-.options-box {
-  margin-top: 2rem;
-}
+      .options-box h3 {
+        margin-bottom: 1.5rem;
+        font-size: 1.1rem;
+      }
 
-.options-box h3 {
-  margin-bottom: 1.5rem;
-  font-size: 1.1rem;
-}
+      .option-item {
+        background: rgba(255, 255, 255, 0.05);
+        margin-bottom: 0.75rem;
+        padding: 1.25rem;
+        border-radius: 12px;
+        cursor: pointer;
+        border: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        transition: all 0.2s ease;
+      }
 
-.option-item {
-  background: rgba(255,255,255,0.05);
-  margin-bottom: 0.75rem;
-  padding: 1.25rem;
-  border-radius: 12px;
-  cursor: pointer;
-  border: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  transition: all 0.2s ease;
-}
+      .option-item:hover {
+        background: rgba(255, 255, 255, 0.08);
+        transform: translateY(-2px);
+        border-color: var(--primary);
+      }
 
-.option-item:hover {
-  background: rgba(255,255,255,0.08);
-  transform: translateY(-2px);
-  border-color: var(--primary);
-}
+      .option-item input {
+        margin-right: 1rem;
+        width: 1.2rem;
+        height: 1.2rem;
+        cursor: pointer;
+        accent-color: var(--primary);
+      }
 
-.option-item input {
-  margin-right: 1rem;
-  width: 1.2rem;
-  height: 1.2rem;
-  cursor: pointer;
-  accent-color: var(--primary);
-}
+      .option-item label {
+        cursor: pointer;
+        flex: 1;
+      }
 
-.option-item label {
-  cursor: pointer;
-  flex: 1;
-}
+      button {
+        width: 100%;
+        padding: 1rem;
+        border-radius: 12px;
+        border: none;
+        background: var(--primary);
+        color: white;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s;
+        margin-top: 1.5rem;
+      }
 
-button {
-  width: 100%;
-  padding: 1rem;
-  border-radius: 12px;
-  border: none;
-  background: var(--primary);
-  color: white;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.3s;
-  margin-top: 1.5rem;
-}
+      button:hover {
+        background: var(--primary-hover);
+        transform: translateY(-2px);
+      }
 
-button:hover {
-  background: var(--primary-hover);
-  transform: translateY(-2px);
-}
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
 
-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
+      .menu {
+        text-align: center;
+        margin-top: 2rem;
+      }
 
-.menu {
-  text-align: center;
-  margin-top: 2rem;
-}
+      .menu a {
+        color: #94a3b8;
+        text-decoration: none;
+        font-size: 0.9rem;
+      }
 
-.menu a {
-  color: #94a3b8;
-  text-decoration: none;
-  font-size: 0.9rem;
-}
+      .menu a:hover {
+        color: white;
+      }
 
-.menu a:hover {
-  color: white;
-}
+      .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: #94a3b8;
+      }
+    </style>
+  </head>
 
-.empty-state {
-  text-align: center;
-  padding: 3rem 1rem;
-  color: #94a3b8;
-}
-</style>
-</head>
+  <body>
+    <div class="container">
+      <h1>Cast Your Vote</h1>
+      <h2>Select Election & Vote</h2>
 
-<body>
-<div class="container">
-
-<h1>Cast Your Vote</h1>
-<h2>Select Election & Vote</h2>
-
-<!-- Flash Messages -->
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    <div class="flash-messages">
-      {% for category, message in messages %}
+      <!-- Flash Messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %}
+      <div class="flash-messages">
+        {% for category, message in messages %}
         <div class="flash-message {{ category }}">{{ message }}</div>
-      {% endfor %}
+        {% endfor %}
+      </div>
+      {% endif %} {% endwith %} {% if elections %}
+
+      <form method="POST" id="voteForm">
+        <!-- Election Selection -->
+        <label
+          for="election-select"
+          style="display: block; margin-bottom: 0.5rem; font-weight: 600"
+        >
+          Choose Election:
+        </label>
+        <select name="election_id" id="election-select" required>
+          <option value="">-- Select an Election --</option>
+          {% for election in elections %}
+          <option
+            value="{{ election['id'] }}"
+            data-options="{{ election['options'] }}"
+          >
+            {{ election['question'] }}
+          </option>
+          {% endfor %}
+        </select>
+
+        <!-- Options will be displayed here dynamically -->
+        <div id="options-container" style="display: none">
+          <div class="options-box">
+            <h3>Choose Your Option:</h3>
+            <div id="options-list"></div>
+
+            <button type="submit" id="submit-btn">
+              Encrypt & Cast Secure Vote
+            </button>
+          </div>
+        </div>
+      </form>
+
+      {% else %}
+
+      <div class="empty-state">
+        <h3>No Elections Available</h3>
+        <p>There are currently no active elections to vote in.</p>
+      </div>
+
+      {% endif %}
+
+      <div class="menu">
+        <a href="/logout">Logout</a>
+      </div>
     </div>
-  {% endif %}
-{% endwith %}
 
-{% if elections %}
+    <script>
+      // Dynamic options loading based on election selection
+      document
+        .getElementById("election-select")
+        .addEventListener("change", function () {
+          const optionsContainer = document.getElementById("options-container");
+          const optionsList = document.getElementById("options-list");
+          const selectedOption = this.options[this.selectedIndex];
 
-<form method="POST" id="voteForm">
+          if (this.value) {
+            // Get options from data attribute
+            const optionsStr = selectedOption.getAttribute("data-options");
+            const options = optionsStr.split(",");
 
-  <!-- Election Selection -->
-  <label for="election-select" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">
-    Choose Election:
-  </label>
-  <select name="election_id" id="election-select" required>
-    <option value="">-- Select an Election --</option>
-    {% for election in elections %}
-      <option value="{{ election['id'] }}" data-options="{{ election['options'] }}">
-        {{ election['question'] }}
-      </option>
-    {% endfor %}
-  </select>
+            // Clear previous options
+            optionsList.innerHTML = "";
 
-  <!-- Options will be displayed here dynamically -->
-  <div id="options-container" style="display: none;">
-    <div class="options-box">
-      <h3>Choose Your Option:</h3>
-      <div id="options-list"></div>
-      
-      <button type="submit" id="submit-btn">
-        🔒 Encrypt & Cast Secure Vote
-      </button>
-    </div>
-  </div>
-
-</form>
-
-{% else %}
-
-<div class="empty-state">
-  <h3>No Elections Available</h3>
-  <p>There are currently no active elections to vote in.</p>
-  <p style="margin-top: 1rem;">
-    <a href="/logout" style="color: var(--primary);">Logout</a>
-  </p>
-</div>
-
-{% endif %}
-
-<div class="menu">
-  <a href="/logout">← Logout</a>
-</div>
-
-</div>
-
-<script>
-// Dynamic options loading based on election selection
-document.getElementById('election-select').addEventListener('change', function() {
-  const optionsContainer = document.getElementById('options-container');
-  const optionsList = document.getElementById('options-list');
-  const selectedOption = this.options[this.selectedIndex];
-  
-  if (this.value) {
-    // Get options from data attribute
-    const optionsStr = selectedOption.getAttribute('data-options');
-    const options = optionsStr.split(',');
-    
-    // Clear previous options
-    optionsList.innerHTML = '';
-    
-    // Create radio buttons for each option
-    options.forEach((option, index) => {
-      const trimmedOption = option.trim();
-      const optionDiv = document.createElement('div');
-      optionDiv.className = 'option-item';
-      optionDiv.innerHTML = `
+            // Create radio buttons for each option
+            options.forEach((option, index) => {
+              const trimmedOption = option.trim();
+              const optionDiv = document.createElement("div");
+              optionDiv.className = "option-item";
+              optionDiv.innerHTML = `
         <input type="radio" 
                name="vote_option" 
                value="${trimmedOption}" 
@@ -290,47 +291,50 @@ document.getElementById('election-select').addEventListener('change', function()
                required>
         <label for="opt-${index}">${trimmedOption}</label>
       `;
-      optionsList.appendChild(optionDiv);
-      
-      // Make the whole div clickable
-      optionDiv.addEventListener('click', function(e) {
-        if (e.target.tagName !== 'INPUT') {
-          this.querySelector('input').checked = true;
-        }
-      });
-    });
-    
-    // Show options container
-    optionsContainer.style.display = 'block';
-  } else {
-    // Hide options if no election selected
-    optionsContainer.style.display = 'none';
-  }
-});
+              optionsList.appendChild(optionDiv);
 
-// Form validation
-document.getElementById('voteForm').addEventListener('submit', function(e) {
-  const electionId = document.getElementById('election-select').value;
-  const voteOption = document.querySelector('input[name="vote_option"]:checked');
-  
-  if (!electionId) {
-    e.preventDefault();
-    alert('Please select an election');
-    return false;
-  }
-  
-  if (!voteOption) {
-    e.preventDefault();
-    alert('Please select a voting option');
-    return false;
-  }
-  
-  // Show loading state
-  const submitBtn = document.getElementById('submit-btn');
-  submitBtn.disabled = true;
-  submitBtn.textContent = '🔒 Encrypting vote...';
-});
-</script>
+              // Make the whole div clickable
+              optionDiv.addEventListener("click", function (e) {
+                if (e.target.tagName !== "INPUT") {
+                  this.querySelector("input").checked = true;
+                }
+              });
+            });
 
-</body>
+            // Show options container
+            optionsContainer.style.display = "block";
+          } else {
+            // Hide options if no election selected
+            optionsContainer.style.display = "none";
+          }
+        });
+
+      // Form validation
+      document
+        .getElementById("voteForm")
+        .addEventListener("submit", function (e) {
+          const electionId = document.getElementById("election-select").value;
+          const voteOption = document.querySelector(
+            'input[name="vote_option"]:checked',
+          );
+
+          if (!electionId) {
+            e.preventDefault();
+            alert("Please select an election");
+            return false;
+          }
+
+          if (!voteOption) {
+            e.preventDefault();
+            alert("Please select a voting option");
+            return false;
+          }
+
+          // Show loading state
+          const submitBtn = document.getElementById("submit-btn");
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Encrypting vote...";
+        });
+    </script>
+  </body>
 </html>

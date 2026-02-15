@@ -144,8 +144,8 @@ def view_voters():
         if selected_election:
             # Get voters registered for this election with their voting status
             users = db.execute("""
-                SELECT users.*, voter_elections.has_voted as voted_in_election
-                FROM users
+                SELECT users.id, users.username, users.has_voted, users.role,
+                voter_elections.has_voted as voted_in_election FROM users
                 JOIN voter_elections ON users.id = voter_elections.voter_id
                 WHERE voter_elections.election_id=? AND users.role='voter'
                 ORDER BY voter_elections.has_voted ASC, users.username ASC
@@ -172,7 +172,7 @@ def vote():
 
     # Get only elections this voter is registered for and hasn't voted in yet
     elections = db.execute("""
-        SELECT election.*, voter_elections.has_voted
+        SELECT election.question, election.options, election.id, voter_elections.has_voted
         FROM election
         JOIN voter_elections ON election.id = voter_elections.election_id
         WHERE voter_elections.voter_id = ? AND voter_elections.has_voted = 0
@@ -198,7 +198,7 @@ def vote():
         
         # Check if already voted
         if voter_registration['has_voted'] == 1:
-            return render_template("message.html",
+            return render_template("select_election_vote.html",
                                    title="Access Denied",
                                    message="You already voted in this election.",
                                    redirect_url="/logout")
@@ -229,10 +229,8 @@ def vote():
             
             db.commit()
 
-            return render_template("message.html",
-                                   title="Success",
-                                   message="Vote cast securely. Thank you for participating!",
-                                   redirect_url="/logout")
+            flash("Vote cast securely. Thank you for participating!", "success")
+            return redirect("/vote")
         except Exception as e:
             flash(f"Error casting vote: {str(e)}", "error")
             return render_template("select_election_vote.html", elections=elections)
