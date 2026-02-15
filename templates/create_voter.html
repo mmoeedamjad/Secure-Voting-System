@@ -144,7 +144,7 @@
 
         <!-- Election Selection -->
         <div class="election-section">
-          <h3>📋 Register for Elections</h3>
+          <h3>Register for Elections</h3>
 
           {% if elections %}
 
@@ -186,7 +186,7 @@
 
           {% else %}
           <div class="no-elections">
-            <p>⚠️ No elections available</p>
+            <p>No elections available</p>
             <p style="font-size: 0.9rem; margin-top: 0.5rem">
               Please create an election first before registering voters.
             </p>
@@ -198,7 +198,7 @@
                 display: inline-block;
               "
             >
-              → Create Election
+              Create Election
             </a>
           </div>
           {% endif %}
@@ -228,8 +228,6 @@
           "select-all-checkbox",
         );
         const allCheckboxes = document.querySelectorAll(".election-checkbox");
-
-        selectAllCheckbox.checked = !selectAllCheckbox.checked;
 
         allCheckboxes.forEach((checkbox) => {
           checkbox.checked = selectAllCheckbox.checked;
